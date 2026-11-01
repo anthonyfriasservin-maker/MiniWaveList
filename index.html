@@ -153,5 +153,61 @@ document.getElementById("level-count").textContent=levels.length;
 document.getElementById("remaining-count").textContent=50-levels.length;
 renderLevels();renderPlayers();
 </script>
+<section id="submit-record" style="max-width:700px;margin:40px auto;padding:25px;background:#171717;color:white;border:1px solid #444;">
+  <h1>SUBMIT A RECORD</h1>
+  <p>Submit your mini-wave completion for review.</p>
+
+  <form id="submission-form">
+    <label>Geometry Dash Username</label><br>
+    <input name="player" required maxlength="50" style="width:100%;padding:12px;margin:8px 0 16px;">
+
+    <label>Level Name</label><br>
+    <input name="level" required maxlength="100" style="width:100%;padding:12px;margin:8px 0 16px;">
+
+    <label>YouTube Completion Video</label><br>
+    <input name="video" type="url" required maxlength="500" placeholder="https://youtu.be/..." style="width:100%;padding:12px;margin:8px 0 16px;">
+
+    <label>Additional Notes (Optional)</label><br>
+    <textarea name="notes" maxlength="500" style="width:100%;padding:12px;margin:8px 0 16px;"></textarea>
+
+    <button type="submit" id="submit-button">SEND SUBMISSION</button>
+    <p id="submission-status"></p>
+  </form>
+</section>
+
+<script>
+const WORKER_URL = "https://miniwavelist-submissions.anthonyfriasservin.workers.dev/";
+
+document.getElementById("submission-form").addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const button = document.getElementById("submit-button");
+  const status = document.getElementById("submission-status");
+
+  button.disabled = true;
+  status.textContent = "Sending submission...";
+
+  const data = Object.fromEntries(new FormData(this).entries());
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) throw new Error(result.error || "Submission failed.");
+
+    status.textContent = "Submission sent successfully!";
+    this.reset();
+  } catch (error) {
+    status.textContent = error.message;
+  }
+
+  button.disabled = false;
+});
+</script>
 </body>
 </html>
