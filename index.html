@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiniWaveList</title>
+<style>
+:root{--bg:#0b0b0b;--panel:#151515;--panel2:#202020;--red:#d71920;--muted:#aaa;--line:#303030}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font-family:Arial,Helvetica,sans-serif}
+header{background:var(--panel);border-bottom:3px solid var(--red);padding:20px 8%;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.logo{color:var(--red);font-size:26px;font-weight:800;letter-spacing:2px}nav{display:flex;gap:24px;flex-wrap:wrap}
+nav button{border:0;background:none;color:white;cursor:pointer;font-size:13px;font-weight:700;padding:8px 0}nav button:hover,nav button.active{color:var(--red)}
+.container{width:84%;max-width:1200px;margin:34px auto}.page{display:none}.page.active{display:block}
+.hero{background:var(--panel);border-left:5px solid var(--red);padding:25px;margin-bottom:22px}.hero h1{margin:0 0 9px;font-size:30px}.hero p{margin:0;color:var(--muted);line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:24px}.stat-box{background:var(--panel);border-bottom:3px solid var(--red);text-align:center;padding:19px}.stat-box h2{margin:0;color:var(--red);font-size:28px}.stat-box p{margin:7px 0 0;color:var(--muted);font-size:12px}
+.section-title{background:var(--red);padding:13px 17px;font-weight:800}.table-wrapper{overflow-x:auto;background:var(--panel)}
+table{width:100%;border-collapse:collapse;min-width:680px}th{background:var(--panel2);color:var(--muted);text-align:left;padding:14px 15px;font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+td{padding:15px;border-bottom:1px solid #292929;font-size:14px}.level-row,.player-row{cursor:pointer}.level-row:hover,.player-row:hover{background:#242424}
+.rank{color:var(--red);font-weight:800}.level-name,.player-name{font-weight:700}.points{color:#ff555b;font-weight:800}.verifier{color:#ccc}
+.detail-row{display:none}.detail-row.open{display:table-row}.detail-cell{padding:18px!important;background:#101010}
+.detail-layout{display:grid;grid-template-columns:2fr 1fr;gap:18px}.level-detail,.victors,.player-detail{background:#191919;border:1px solid var(--line);padding:19px}
+.level-detail h3,.victors h3,.player-detail h3{color:var(--red);margin:0 0 15px}
+.video-container{position:relative;width:100%;padding-bottom:56.25%;height:0;margin-bottom:14px;background:#050505}.video-container iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.detail-info{color:var(--muted);font-size:13px;line-height:1.8}.victor,.beaten-level{background:#252525;border-left:3px solid var(--red);padding:11px;margin-bottom:8px}
+.beaten-level{display:flex;justify-content:space-between;align-items:center;gap:14px}.player-total{border-top:1px solid var(--line);margin-top:14px;padding-top:13px;font-weight:800}
+.about-box{background:var(--panel);padding:24px;color:#bbb;line-height:1.7}.about-box h2{color:var(--red);margin-top:22px}.about-box h2:first-child{margin-top:0}
+footer{text-align:center;color:#666;padding:28px 15px;font-size:11px}
+@media(max-width:760px){header{padding:18px 5%}.container{width:94%}.detail-layout,.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">MINIWAVELIST</div>
+ <nav aria-label="Main navigation">
+  <button class="active" data-page="main">MAIN LIST</button>
+  <button data-page="viewer">STATS VIEWER</button>
+  <button data-page="about">ABOUT</button>
+ </nav>
+</header>
+<main class="container">
+<section id="main" class="page active">
+ <div class="hero"><h1>MAIN LIST</h1><p>The hardest full mini-wave-only Geometry Dash levels.</p></div>
+ <div class="stats">
+  <div class="stat-box"><h2 id="level-count">10</h2><p>LISTED LEVELS</p></div>
+  <div class="stat-box"><h2>50</h2><p>MAXIMUM LEVELS</p></div>
+  <div class="stat-box"><h2 id="remaining-count">40</h2><p>SPOTS REMAINING</p></div>
+ </div>
+ <div class="section-title">TOP 50 LEADERBOARD</div>
+ <div class="table-wrapper"><table><thead><tr><th>Rank</th><th>Level</th><th>Level ID</th><th>Verifier</th><th>Points</th></tr></thead><tbody id="level-table"></tbody></table></div>
+</section>
+<section id="viewer" class="page">
+ <div class="hero"><h1>STATS VIEWER</h1><p>Players earn points by beating ranked MiniWaveList levels. Click a player to see where their points came from.</p></div>
+ <div class="stats">
+  <div class="stat-box"><h2 id="player-count">9</h2><p>PLAYERS WITH POINTS</p></div>
+  <div class="stat-box"><h2 id="highest-score">140</h2><p>HIGHEST SCORE</p></div>
+  <div class="stat-box"><h2 id="points-earned">550</h2><p>COMBINED PLAYER POINTS</p></div>
+ </div>
+ <div class="section-title">PLAYER LEADERBOARD</div>
+ <div class="table-wrapper"><table><thead><tr><th>Rank</th><th>Player</th><th>Levels Beaten</th><th>Total Points</th></tr></thead><tbody id="player-table"></tbody></table></div>
+</section>
+<section id="about" class="page">
+ <div class="hero"><h1>ABOUT MINIWAVELIST</h1><p>A leaderboard dedicated to full mini-wave-only Geometry Dash levels.</p></div>
+ <div class="about-box">
+  <h2>What is MiniWaveList?</h2><p>MiniWaveList ranks Geometry Dash levels that are played entirely using the mini-wave gamemode.</p>
+  <h2>Level Points</h2><p>#1 = 100 points<br>#2 = 90 points<br>#3 = 80 points<br>#4 = 70 points<br>#5 = 60 points<br>#6 = 50 points<br>#7 = 40 points<br>#8 = 30 points<br>#9 = 20 points<br>#10 = 10 points</p>
+  <h2>Stats Viewer</h2><p>Each player receives the points assigned to every ranked level they beat. Those points stack, and the Stats Viewer ranks players by their total.</p>
+  <h2>Verifiers and Victors</h2><p>Each level has one verifier. Its Victors panel lists players confirmed to have beaten that level.</p>
+ </div>
+</section>
+</main>
+<footer>MINIWAVELIST — GEOMETRY DASH MINI WAVE LEADERBOARD</footer>
+<script>
+const levels=[
+{name:"Sonic Wave Mini Wave",id:"92220179",verifier:"MeowPau",points:100,video:"7erBGjWj6R8",victors:["MeowPau"]},
+{name:"Allegiance Mini Wave",id:"119882210",verifier:"zugi5474",points:90,video:"cvTKmLv0478?start=258",victors:["zugi5474"]},
+{name:"Supersonic Mini Wave",id:"151620493",verifier:"PureL",points:80,video:"Rj6nQdwy0oE?start=255",victors:["PureL"]},
+{name:"Heartbeat Mini Wave",id:"75152362",verifier:"Rizzkid07",points:70,video:"onRKcUaHPAc",victors:["Rizzkid07"]},
+{name:"Forest Temple Mini Wave",id:"114028827",verifier:"PureL",points:60,video:"Rj6nQdwy0oE?start=199",victors:["PureL"]},
+{name:"Acropolis Mini Wave",id:"95117739",verifier:"KodyTD",points:50,video:"eZbxdp0x12A",victors:["KodyTD"]},
+{name:"Decode Mini Wave",id:"40515683",verifier:"Square Demon",points:40,video:"zYqlPGuUVA4",victors:["Square Demon"]},
+{name:"Deadlocked but Mini",id:"86289621",verifier:"revizume",points:30,video:"HK3IZTCD4KQ",victors:["revizume"]},
+{name:"ToE2 But Mini Wave",id:"132805627",verifier:"Refresh-GDYT",points:20,video:"EymT1N-u5vQ",victors:["Refresh-GDYT"]},
+{name:"Clubstep But Mini Wave",id:"139542995",verifier:"Innerspacezombie",points:10,video:"GLJlqODeIiM",victors:["Innerspacezombie"]}
+];
+const players=[
+{name:"PureL",levelIndexes:[2,4]},
+{name:"MeowPau",levelIndexes:[0]},
+{name:"zugi5474",levelIndexes:[1]},
+{name:"Rizzkid07",levelIndexes:[3]},
+{name:"KodyTD",levelIndexes:[5]},
+{name:"Square Demon",levelIndexes:[6]},
+{name:"revizume",levelIndexes:[7]},
+{name:"Refresh-GDYT",levelIndexes:[8]},
+{name:"Innerspacezombie",levelIndexes:[9]}
+];
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function playerPoints(p){return p.levelIndexes.reduce((sum,i)=>sum+(levels[i]?.points||0),0);}
+function renderLevels(){
+ document.getElementById("level-table").innerHTML=levels.map((l,i)=>`
+ <tr class="level-row" data-level="${i}" tabindex="0" aria-expanded="false">
+  <td class="rank">#${i+1}</td><td class="level-name">${esc(l.name)}</td><td>${esc(l.id)}</td><td class="verifier">${esc(l.verifier)}</td><td class="points">${l.points}</td>
+ </tr>
+ <tr class="detail-row" id="level-detail-${i}"><td colspan="5" class="detail-cell"><div class="detail-layout">
+  <div class="level-detail"><h3>${esc(l.name)}</h3><div class="video-container"><iframe title="${esc(l.name)} showcase" data-video="https://www.youtube-nocookie.com/embed/${esc(l.video)}" loading="lazy" allowfullscreen></iframe></div>
+  <div class="detail-info">Level ID: ${esc(l.id)}<br>Verifier: ${esc(l.verifier)}<br>Points: ${l.points}</div></div>
+  <div class="victors"><h3>VICTORS</h3>${l.victors.map(v=>`<div class="victor">${esc(v)}</div>`).join("")}</div>
+ </div></td></tr>`).join("");
+}
+function renderPlayers(){
+ const sorted=[...players].map(p=>({...p,points:playerPoints(p)})).sort((a,b)=>b.points-a.points||a.name.localeCompare(b.name));
+ document.getElementById("player-count").textContent=sorted.length;
+ document.getElementById("highest-score").textContent=sorted[0]?.points||0;
+ document.getElementById("points-earned").textContent=sorted.reduce((s,p)=>s+p.points,0);
+ document.getElementById("player-table").innerHTML=sorted.map((p,i)=>`
+ <tr class="player-row" data-player="${i}" tabindex="0" aria-expanded="false">
+  <td class="rank">#${i+1}</td><td class="player-name">${esc(p.name)}</td><td>${p.levelIndexes.length}</td><td class="points">${p.points}</td>
+ </tr>
+ <tr class="detail-row" id="player-detail-${i}"><td colspan="4" class="detail-cell"><div class="player-detail">
+  <h3>${esc(p.name)} — Beaten Levels</h3>
+  ${p.levelIndexes.map(n=>`<div class="beaten-level"><span>${esc(levels[n].name)} (#${n+1})</span><strong class="points">+${levels[n].points} points</strong></div>`).join("")}
+  <div class="player-total">Total: <span class="points">${p.points} points</span></div>
+ </div></td></tr>`).join("");
+}
+function closeDetails(selector){
+ document.querySelectorAll(selector).forEach(r=>{r.classList.remove("open");const f=r.querySelector("iframe");if(f)f.src="";});
+}
+function toggleLevel(i){
+ const r=document.getElementById("level-detail-"+i),was=r.classList.contains("open");
+ closeDetails("#level-table .detail-row");
+ document.querySelectorAll("#level-table .level-row").forEach(x=>x.setAttribute("aria-expanded","false"));
+ if(!was){r.classList.add("open");const f=r.querySelector("iframe");f.src=f.dataset.video;document.querySelector(`.level-row[data-level="${i}"]`).setAttribute("aria-expanded","true");}
+}
+function togglePlayer(i){
+ const r=document.getElementById("player-detail-"+i),was=r.classList.contains("open");
+ closeDetails("#player-table .detail-row");
+ document.querySelectorAll("#player-table .player-row").forEach(x=>x.setAttribute("aria-expanded","false"));
+ if(!was){r.classList.add("open");document.querySelector(`.player-row[data-player="${i}"]`).setAttribute("aria-expanded","true");}
+}
+document.querySelector("nav").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-page]");if(!b)return;
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(b.dataset.page).classList.add("active");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+});
+function rowHandler(tableId,rowClass,dataAttr,fn){
+ const table=document.getElementById(tableId);
+ table.addEventListener("click",e=>{const r=e.target.closest("."+rowClass);if(r)fn(Number(r.dataset[dataAttr]));});
+ table.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const r=e.target.closest("."+rowClass);if(r){e.preventDefault();fn(Number(r.dataset[dataAttr]));}});
+}
+rowHandler("level-table","level-row","level",toggleLevel);
+rowHandler("player-table","player-row","player",togglePlayer);
+document.getElementById("level-count").textContent=levels.length;
+document.getElementById("remaining-count").textContent=50-levels.length;
+renderLevels();renderPlayers();
+</script>
+</body>
+</html>
