@@ -5,36 +5,490 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MiniWaveList</title>
 <style>
-:root{--bg:#0b0b0b;--panel:#151515;--panel2:#202020;--red:#d71920;--muted:#aaa;--line:#303030}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font-family:Arial,Helvetica,sans-serif}
-header{background:var(--panel);border-bottom:3px solid var(--red);padding:20px 8%;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
-.logo{color:var(--red);font-size:26px;font-weight:800;letter-spacing:2px}nav{display:flex;gap:24px;flex-wrap:wrap}
-nav button{border:0;background:none;color:white;cursor:pointer;font-size:13px;font-weight:700;padding:8px 0}nav button:hover,nav button.active{color:var(--red)}
-.container{width:84%;max-width:1200px;margin:34px auto}.page{display:none}.page.active{display:block}
-.hero{background:var(--panel);border-left:5px solid var(--red);padding:25px;margin-bottom:22px}.hero h1{margin:0 0 9px;font-size:30px}.hero p{margin:0;color:var(--muted);line-height:1.5}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:24px}.stat-box{background:var(--panel);border-bottom:3px solid var(--red);text-align:center;padding:19px}.stat-box h2{margin:0;color:var(--red);font-size:28px}.stat-box p{margin:7px 0 0;color:var(--muted);font-size:12px}
-.section-title{background:var(--red);padding:13px 17px;font-weight:800}.table-wrapper{overflow-x:auto;background:var(--panel)}
-table{width:100%;border-collapse:collapse;min-width:680px}th{background:var(--panel2);color:var(--muted);text-align:left;padding:14px 15px;font-size:11px;text-transform:uppercase;letter-spacing:.6px}
-td{padding:15px;border-bottom:1px solid #292929;font-size:14px}.level-row,.player-row{cursor:pointer}.level-row:hover,.player-row:hover{background:#242424}
-.rank{color:var(--red);font-weight:800}.level-name,.player-name{font-weight:700}.points{color:#ff555b;font-weight:800}.verifier{color:#ccc}
-.detail-row{display:none}.detail-row.open{display:table-row}.detail-cell{padding:18px!important;background:#101010}
-.detail-layout{display:grid;grid-template-columns:2fr 1fr;gap:18px}.level-detail,.victors,.player-detail{background:#191919;border:1px solid var(--line);padding:19px}
-.level-detail h3,.victors h3,.player-detail h3{color:var(--red);margin:0 0 15px}
-.video-container{position:relative;width:100%;padding-bottom:56.25%;height:0;margin-bottom:14px;background:#050505}.video-container iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.detail-info{color:var(--muted);font-size:13px;line-height:1.8}.victor,.beaten-level{background:#252525;border-left:3px solid var(--red);padding:11px;margin-bottom:8px}
-.beaten-level{display:flex;justify-content:space-between;align-items:center;gap:14px}.player-total{border-top:1px solid var(--line);margin-top:14px;padding-top:13px;font-weight:800}
-.about-box{background:var(--panel);padding:24px;color:#bbb;line-height:1.7}.about-box h2{color:var(--red);margin-top:22px}.about-box h2:first-child{margin-top:0}
-footer{text-align:center;color:#666;padding:28px 15px;font-size:11px}
-@media(max-width:760px){header{padding:18px 5%}.container{width:94%}.detail-layout,.stats{grid-template-columns:1fr}}
+:root {
+    --bg: #090812;
+    --panel: #151323;
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --text: #f7f3ff;
+    --muted: #aaa4bd;
+    --line: #382d50;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 50% -20%, #39245a, transparent 55%),
+        var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+    background: #110e1ef2;
+    border-bottom: 1px solid #65418a;
+    box-shadow: 0 5px 30px #0008;
+    padding: 20px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    color: #e9c9ff;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 0 16px var(--purple);
+}
+
+nav {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+nav button {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+nav button:hover,
+nav button.active {
+    color: white;
+    border-color: #7545a1;
+    background: #2a1d40;
+    box-shadow: 0 0 22px #a855f72b;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 38px auto;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+    animation: rise 0.3s ease;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero {
+    background: linear-gradient(115deg, #251a38, #151323 68%);
+    border: 1px solid #493260;
+    border-left: 4px solid var(--purple);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 22px;
+    box-shadow: 0 0 22px #a855f72b;
+}
+
+.hero h1 {
+    margin: 0 0 9px;
+    font-size: clamp(25px, 4vw, 34px);
+    letter-spacing: 1px;
+    text-shadow: 0 0 18px #a855f755;
+}
+
+.hero p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.stat-box {
+    background: linear-gradient(145deg, #1b1830, #12111d);
+    border: 1px solid var(--line);
+    border-bottom: 3px solid var(--purple);
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 8px 25px #0003;
+}
+
+.stat-box h2 {
+    margin: 0;
+    color: #d8a8ff;
+    font-size: 30px;
+    text-shadow: 0 0 15px #a855f766;
+}
+
+.stat-box p {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.section-title {
+    background: linear-gradient(90deg, #7135a5, #3d245c);
+    border: 1px solid #8950b4;
+    padding: 14px 17px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    border-radius: 9px 9px 0 0;
+    box-shadow: 0 0 22px #a855f72b;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 0;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 12px 30px #0004;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 680px;
+}
+
+th {
+    background: #211c33;
+    color: #b9a9d0;
+    text-align: left;
+    padding: 15px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #2c263e;
+    font-size: 14px;
+}
+
+.level-row,
+.player-row {
+    cursor: pointer;
+    transition: background 0.18s;
+}
+
+.level-row:hover,
+.player-row:hover {
+    background: #29213d;
+}
+
+.rank {
+    color: #d69cff;
+    font-weight: 900;
+}
+
+.level-name,
+.player-name {
+    font-weight: 800;
+}
+
+.points {
+    color: #e6a6ff;
+    font-weight: 900;
+}
+
+.verifier {
+    color: #c8bfd6;
+}
+
+.level-row:first-child .rank,
+.player-row:first-child .rank {
+    color: #ffd66b;
+    text-shadow: 0 0 10px #ffd66b66;
+}
+
+.detail-row {
+    display: none;
+}
+
+.detail-row.open {
+    display: table-row;
+}
+
+.detail-cell {
+    padding: 18px !important;
+    background: #100e19;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+}
+
+.level-detail,
+.victors,
+.player-detail {
+    background: #191526;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 19px;
+}
+
+.level-detail h3,
+.victors h3,
+.player-detail h3 {
+    color: #d69cff;
+    margin: 0 0 15px;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+    margin-bottom: 14px;
+    background: #050505;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #493260;
+}
+
+.video-container iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.detail-info {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.victor,
+.beaten-level {
+    background: #252039;
+    border: 1px solid #382b50;
+    border-left: 3px solid var(--purple);
+    border-radius: 5px;
+    padding: 11px;
+    margin-bottom: 8px;
+}
+
+.beaten-level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+}
+
+.player-total {
+    border-top: 1px solid var(--line);
+    margin-top: 14px;
+    padding-top: 13px;
+    font-weight: 800;
+}
+
+.about-box {
+    background: linear-gradient(145deg, #191526, #12111d);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 25px;
+    color: #c5bfd1;
+    line-height: 1.8;
+}
+
+.about-box h2 {
+    color: #d69cff;
+    margin-top: 22px;
+}
+
+.about-box h2:first-child {
+    margin-top: 0;
+}
+
+#submit-record {
+    max-width: 700px;
+    margin: 38px auto;
+    padding: 26px;
+    background: linear-gradient(145deg, #1b1730, #12111d);
+    color: white;
+    border: 1px solid #493260;
+    border-radius: 12px;
+    box-shadow: 0 0 22px #a855f72b;
+}
+
+#submit-record h1 {
+    margin-top: 0;
+    color: #e0b4ff;
+    letter-spacing: 1px;
+}
+
+#submit-record p {
+    color: var(--muted);
+}
+
+#submission-form label {
+    display: inline-block;
+    margin-top: 8px;
+    color: #d8c8e8;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#submission-form input,
+#submission-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 14px;
+    background: #0d0b16;
+    color: white;
+    border: 1px solid #443456;
+    border-radius: 7px;
+    font: inherit;
+}
+
+#submission-form input:focus,
+#submission-form textarea:focus {
+    outline: 2px solid var(--purple);
+    border-color: transparent;
+}
+
+#submission-form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+#submit-button {
+    border: 1px solid #bd83ed;
+    background: linear-gradient(100deg, #7435a7, #a044b7);
+    color: white;
+    padding: 13px 20px;
+    border-radius: 7px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#submit-button:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 18px #a855f766;
+    transform: translateY(-1px);
+}
+
+#submit-button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+#submission-status {
+    min-height: 18px;
+}
+
+footer {
+    text-align: center;
+    color: #81758f;
+    padding: 30px 15px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+}
+
+@media (max-width: 760px) {
+    header {
+        padding: 18px 5%;
+        justify-content: center;
+    }
+
+    .container {
+        width: 94%;
+        margin: 24px auto;
+    }
+
+    .detail-layout,
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 23px;
+    }
+
+    .logo {
+        font-size: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+.discord-button {
+    display: inline-block;
+    padding: 12px 18px;
+    background: #5865F2;
+    color: white;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.discord-button:hover {
+    background: #4752c4;
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px #5865F288;
+}
 </style>
 </head>
 <body>
 <header>
  <div class="logo">MINIWAVELIST</div>
- <nav aria-label="Main navigation">
-  <button class="active" data-page="main">MAIN LIST</button>
-  <button data-page="viewer">STATS VIEWER</button>
-  <button data-page="about">ABOUT</button>
+<nav aria-label="Main navigation">
+    <button class="active" data-page="main">MAIN LIST</button>
+    <button data-page="viewer">STATS VIEWER</button>
+    <button data-page="about">ABOUT</button>
+    <a href="https://discord.gg/kUdbUks2uT"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="discord-button">JOIN DISCORD</a>
+</nav>
  </nav>
 </header>
 <main class="container">
